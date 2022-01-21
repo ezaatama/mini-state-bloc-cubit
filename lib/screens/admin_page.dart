@@ -9,14 +9,14 @@ import 'homepage.dart';
 import 'movie_page.dart';
 import 'settings_page.dart';
 
-class Mainpage extends StatefulWidget {
-  const Mainpage({ Key? key }) : super(key: key);
+class AdminPage extends StatefulWidget {
+  const AdminPage({ Key? key }) : super(key: key);
 
   @override
-  State<Mainpage> createState() => _MainpageState();
+  State<AdminPage> createState() => _AdminPageState();
 }
 
-class _MainpageState extends State<Mainpage> {
+class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {

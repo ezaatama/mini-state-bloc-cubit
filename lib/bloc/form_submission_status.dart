@@ -10,8 +10,9 @@ class InitialFormStatus extends FormSubmissionStatus{
 
 class FormSubmitting extends FormSubmissionStatus{}
 
-class SubmissionSuccess extends FormSubmissionStatus{}
+class AdminSubmissionSuccess extends FormSubmissionStatus{}
 
+class UserSubmissionSuccess extends FormSubmissionStatus{}
 class SubmissionFailed extends FormSubmissionStatus{
   final Exception exception;
 

@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:state_cubit/bloc/form_submission_status.dart';
 import 'package:state_cubit/bloc/login_bloc.dart';
 import 'package:state_cubit/repository/login_repository.dart';
-import 'package:state_cubit/screens/mainpage.dart';
+import 'package:state_cubit/screens/admin_page.dart';
+import 'package:state_cubit/screens/user_page.dart';
 import 'package:state_cubit/shared/theme.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class _AuthScreenState extends State<AuthScreen> {
   TextEditingController username = TextEditingController();
 
   TextEditingController password = TextEditingController();
+
+  bool _isObscure = true;
 
   LoginBloc? authBloc;
 
@@ -43,10 +46,12 @@ class _AuthScreenState extends State<AuthScreen> {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         final formStatus = state.formStatus;
-        if (formStatus is SubmissionSuccess) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Mainpage()), (route) => false);
-        } else if(formStatus is SubmissionFailed){
-          _showSnackBar(context, formStatus.exception.toString());
+        if (formStatus is AdminSubmissionSuccess) {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const AdminPage()), (route) => false);
+        }else if(formStatus is UserSubmissionSuccess){           
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const UserPage()), (route) => false);
+        }else if(formStatus is SubmissionFailed){           
+          _showSnackBar(context, formStatus.exception.toString(), Colors.red);
         }
       },
       child: Form(
@@ -144,7 +149,7 @@ class _AuthScreenState extends State<AuthScreen> {
           margin: const EdgeInsets.only(left: 20, right: 20),
           child: TextFormField(
             controller: password,
-            obscureText: true,
+            obscureText: _isObscure,
             autofocus: false,
             validator: (value) =>
                 state.isValidPassword ? null : "Password is too short",
@@ -154,6 +159,12 @@ class _AuthScreenState extends State<AuthScreen> {
             decoration: InputDecoration(
                 hintText: "Password",
                 filled: true,
+                suffixIcon: IconButton(
+                  onPressed: (){
+                    setState(() {
+                      _isObscure = !_isObscure;
+                    });
+                }, icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility)),
                 contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10))),
@@ -174,7 +185,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      context.read<LoginBloc>().add(LoginSubmitted(username: username.text, password: password.text));
+                      context.read<LoginBloc>().add(LoggedIn(username: username.text, password: password.text));
                     }
                   },
                   child: Text(
@@ -191,8 +202,8 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  void _showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
+  void _showSnackBar(BuildContext context, String message, Color bgColor) {
+    final snackBar = SnackBar(content: Text(message, textAlign: TextAlign.center,), backgroundColor: bgColor,);
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

@@ -22,25 +22,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(state.copyWith(password: event.password));
 
         //form submitted
-      } else if (event is LoginSubmitted) {
+      } else if (event is LoggedIn) {
         emit(state.copyWith(formStatus: FormSubmitting()));
-        // var data = await loginRepo!.login(event.username!, event.password!);
-        // if (data["token_type"] == "bearer") {
-        //   pref.setString('token', data["access_token"]);
-        //   emit(state.copyWith(formStatus: SubmissionSuccess()));
-        // } else {
-        //   emit(state.copyWith(
-        //       formStatus: SubmissionFailed(Exception("failed"))));
-        // }
         try {
             var data = await loginRepo!.login(event.username!, event.password!);
-            if(data["token_type"] == "bearer"){
+            if(data["roles"] == "Superadmin"){
               pref.setString('token', data["access_token"]);
-              emit(state.copyWith(formStatus: SubmissionSuccess()));
+              pref.setString('roles', data["roles"]);
+              emit(state.copyWith(formStatus: AdminSubmissionSuccess()));
+            }else if(data["roles"] == "Provinsi"){
+              pref.setString('token', data["access_token"]);
+              pref.setString('roles', data["roles"]);
+              emit(state.copyWith(formStatus: UserSubmissionSuccess()));
             }
         } on Exception catch (e) {
             emit(state.copyWith(formStatus: SubmissionFailed(e)));
         }
+      } else if(event is LoggedOut){
+          emit(state.copyWith(formStatus: InitialFormStatus()));
+          pref.clear();
+          await loginRepo!.deleteToken();
+          emit(state.copyWith(formStatus: InitialFormStatus()));
       }
     });
   }

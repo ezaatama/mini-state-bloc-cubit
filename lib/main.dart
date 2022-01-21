@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:state_cubit/bloc/auth_bloc.dart';
 import 'package:state_cubit/bloc/login_bloc.dart';
 import 'package:state_cubit/cubit/bottom_nav_cubit.dart';
 import 'package:state_cubit/cubit/counter_cubit.dart';
@@ -11,11 +10,9 @@ import 'package:state_cubit/repository/login_repository.dart';
 import 'package:state_cubit/repository/movie_repository.dart';
 import 'package:state_cubit/repository/quran_repository.dart';
 import 'package:state_cubit/screens/auth_screen.dart';
-import 'package:state_cubit/screens/login_screen.dart';
 import 'package:state_cubit/services/movie_services.dart';
 import 'package:state_cubit/services/quran_services.dart';
 
-import 'repository/auth_repository.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +32,7 @@ class MyApp extends StatelessWidget {
     // RepositoryProvider(create: (context) => LoginRepository(),
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc(AuthInitial(), AuthRepository())),
+        // BlocProvider(create: (context) => AuthBloc(AuthInitial(), AuthRepository())),
         BlocProvider(create: (context) => LoginBloc(loginRepo: LoginRepository()),),
         BlocProvider(create: (context) => BottomNavCubit()),
         BlocProvider(create: (context) => MovieCubit(repository: MovieRepository(MovieService()))),

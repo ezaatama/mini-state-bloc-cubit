@@ -23,5 +23,6 @@ class LoginState {
   }){
     return LoginState(username: username ?? this.username, password: password ?? this.password, formStatus: formStatus ?? this.formStatus);
   }
+  
 }
 
